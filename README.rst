@@ -29,7 +29,8 @@ These conditions are simple:  the value of ``tab-width`` must be equal to the
 indentation value identified by the indentation control variable used for the
 major-mode (such as ``c-basic-offset`` in C, C++ , D buffers, or
 ``ada-indent`` for Ada buffers, or ``python-indent-offset`` for Python
-buffers).  Those values must also represent the real indentation width.
+buffers).  Those values must also represent the real indentation width used by
+inside the file.
 
 With those conditions met inside the buffer, an indentation step identified by
 the indentation control variable corresponds to the tab width and we can now
