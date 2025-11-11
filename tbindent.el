@@ -2,7 +2,7 @@
 
 ;; Created   : Monday, November 10 2025.
 ;; Author    : Pierre Rouleau <prouleau001@gmail.com>
-;; Time-stamp: <2025-11-11 09:34:44 EST, updated by Pierre Rouleau>
+;; Time-stamp: <2025-11-11 10:39:46 EST, updated by Pierre Rouleau>
 
 ;; This file is part of the TBINDENT package.
 ;; This file is not part of GNU Emacs.
@@ -767,19 +767,20 @@ IMPORTANT:
                   (message "Converting %s to tab-based indent, width=%d ..."
                            (current-buffer)
                            tab-width ))
-                ;; Remember the original space based indentation width
-                (setq-local tbindent--space-based-indent-width
-                            (tbindent-mode-indentation-width))
+                (with-silent-modifications
+                  ;; Remember the original space based indentation width
+                  (setq-local tbindent--space-based-indent-width
+                              (tbindent-mode-indentation-width))
 
-                ;; activate indentation with tabs using either the indentation width
-                ;; specified by customization (if that symbol exists and is non-nil
-                ;; or the native tab-width matching indentation width
-                (tbindent-indent-with-tabs
-                 (tbindent-target-indent-width-for major-mode))
-                ;; Install a special auto-fill function that is aware that each tab
-                ;; in the buffer corresponds to the file original space indentation
-                ;; scheme.
-                (tbindent--install-indented-with-tabs-auto-fill)
+                  ;; activate indentation with tabs using either the indentation width
+                  ;; specified by customization (if that symbol exists and is non-nil
+                  ;; or the native tab-width matching indentation width
+                  (tbindent-indent-with-tabs
+                   (tbindent-target-indent-width-for major-mode))
+                  ;; Install a special auto-fill function that is aware that each tab
+                  ;; in the buffer corresponds to the file original space indentation
+                  ;; scheme.
+                  (tbindent--install-indented-with-tabs-auto-fill))
                 ;; The buffer was modified by replacing spaces with tabs but
                 ;; since we want to use it as if it was normal, don't show
                 ;; the buffer modified unless it already was.
@@ -816,7 +817,8 @@ To change tab-width, type:  M-: (setq-local tab-width %d)"
 
       ;; When turning mode off
       ;; ---------------------
-      (tbindent-indent-with-spaces)
+      (with-silent-modifications
+        (tbindent-indent-with-spaces))
       (tbindent--restore-original-fill-function)
       (when (memq 'tbindent--before-save-or-kill before-save-hook)
         (remove-hook 'before-save-hook 'tbindent--before-save-or-kill 'local))
