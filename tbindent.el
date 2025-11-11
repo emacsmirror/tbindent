@@ -2,7 +2,7 @@
 
 ;; Created   : Monday, November 10 2025.
 ;; Author    : Pierre Rouleau <prouleau001@gmail.com>
-;; Time-stamp: <2025-11-11 12:19:00 EST, updated by Pierre Rouleau>
+;; Time-stamp: <2025-11-11 14:22:41 EST, updated by Pierre Rouleau>
 
 ;; This file is part of the TBINDENT package.
 ;; This file is not part of GNU Emacs.
@@ -495,6 +495,8 @@ This is a indentation specific `tabify' function."
                 ;; a TAB here anyway: there's nothing to do.
                 (delete-region (match-beginning 0) (point))
                 (indent-to end-col)))))))))
+
+(defvar tbindent-mode)                  ; prevent byte compiler warnings
 
 (defun tbindent-indent-with-tabs (&optional with-tab-width by-minor-mode)
   "Convert current buffer to use tabs for indentation.
