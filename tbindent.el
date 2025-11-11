@@ -1,14 +1,19 @@
-;;; tbindent.el --- Tab Based Indent.  -*- lexical-binding: t; -*-
+;;; tbindent.el --- Tab Based Indentation Control  -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2025  Pierre Rouleau
+
+;; Author: Pierre Rouleau <prouleau001@gmail.com>
 ;; Created   : Monday, November 10 2025.
-;; Author    : Pierre Rouleau <prouleau001@gmail.com>
-;; Time-stamp: <2025-11-11 14:38:47 EST, updated by Pierre Rouleau>
+;; Time-stamp: <2025-11-11 17:19:20 EST, updated by Pierre Rouleau>
+;; URL: https://github.com/pierre-rouleau/tab-based-indent
+;; Keywords: languages
+;; Package-Version: 20251110.1652
+;; Package-Requires: ((emacs "24.3"))
+
 
 ;; This file is part of the TBINDENT package.
 ;; This file is not part of GNU Emacs.
 
-;; Copyright (C) 2025  Pierre Rouleau
-;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
@@ -813,13 +818,11 @@ IMPORTANT:
                 (unless (memq 'tbindent--before-save-or-kill  before-save-hook)
                   (add-hook 'before-save-hook 'tbindent--before-save-or-kill
                             -100
-                            'local
-                            ))
+                            'local))
                 (unless (memq 'tbindent--before-save-or-kill  kill-buffer-hook)
                   (add-hook 'kill-buffer-hook 'tbindent--before-save-or-kill
                             -100
-                            'local
-                            ))
+                            'local))
                 (unless (memq 'tbindent--after-save after-save-hook)
                   (add-hook 'after-save-hook 'tbindent--after-save
                             +100
