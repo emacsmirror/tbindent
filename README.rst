@@ -25,7 +25,7 @@ solution increases.
 Given appropriate conditions, the **tbindent-mode** converts a buffer content
 from space-based indentation to pure hard-tabs based indentation.
 
-These conditions are simple:  the value of ``tab-width``must be equal to the
+These conditions are simple:  the value of ``tab-width`` must be equal to the
 indentation value identified by the indentation control variable used for the
 major-mode (such as ``c-basic-offset`` in C, C++ , D buffers, or
 ``ada-indent`` for Ada buffers, or ``python-indent-offset`` for Python
@@ -142,7 +142,7 @@ The following commands are provided.
                                        buffer to N.  Prompts for the width; accepts a
                                        value in the [2, 8] range.
 
-                                       - Set the buffer local value of `tab-width' and
+                                       - Set the buffer local value of ``tab-width`` and
                                          indent control variable(s) used by the current
                                          buffer.
                                        - Use this command to change the indentation width
