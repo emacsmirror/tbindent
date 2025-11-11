@@ -2,7 +2,7 @@
 
 ;; Created   : Monday, November 10 2025.
 ;; Author    : Pierre Rouleau <prouleau001@gmail.com>
-;; Time-stamp: <2025-11-11 08:00:11 EST, updated by Pierre Rouleau>
+;; Time-stamp: <2025-11-11 09:34:44 EST, updated by Pierre Rouleau>
 
 ;; This file is part of the TBINDENT package.
 ;; This file is not part of GNU Emacs.
@@ -745,7 +745,7 @@ IMPORTANT:
  can be set to the same value as the indentation variable or all indentation
  variables."
   :lighter tbindent-lighter
-  (let ((message-printed nil))
+  (let ((warning-message-printed nil))
     (if tbindent-mode
         ;; When turning mode on
         ;; --------------------
@@ -761,7 +761,12 @@ IMPORTANT:
                       (save-buffer))
                   (quit
                    (message "Indenting with tabs Mode enabled, buffer not saved!")
-                   (setq message-printed t)))
+                   (setq warning-message-printed t)))
+                ;; Proceed
+                (unless warning-message-printed
+                  (message "Converting %s to tab-based indent, width=%d ..."
+                           (current-buffer)
+                           tab-width ))
                 ;; Remember the original space based indentation width
                 (setq-local tbindent--space-based-indent-width
                             (tbindent-mode-indentation-width))
@@ -778,7 +783,7 @@ IMPORTANT:
                 ;; The buffer was modified by replacing spaces with tabs but
                 ;; since we want to use it as if it was normal, don't show
                 ;; the buffer modified unless it already was.
-                (unless message-printed
+                (unless warning-message-printed
                   (set-buffer-modified-p nil))
                 ;; schedule operation before and after buffer save.
                 (unless (memq 'tbindent--before-save-or-kill  before-save-hook)
@@ -796,7 +801,7 @@ IMPORTANT:
                             +100
                             'local))
 
-                (unless message-printed
+                (unless warning-message-printed
                   (message "Indenting with tabs Mode enabled.")))
             ;; tab-width differs from current indentation!
             (setq-local tbindent-mode nil)
