@@ -1,0 +1,29 @@
+#!/bin/sh
+# SH FILE: build
+#
+# Purpose   : Byte compile package.
+# Created   : Tuesday, November 11 2025.
+# Author    : Pierre Rouleau <prouleau001@gmail.com>
+# Time-stamp: <2025-11-11 14:24:23 EST, updated by Pierre Rouleau>
+# ----------------------------------------------------------------------------
+# Module Description
+# ------------------
+#
+# A simple build script that converts the tbindent.el into tbindent.elc
+# doing it in isolation.
+
+# ----------------------------------------------------------------------------
+# Dependencies
+# ------------
+#
+# None.
+
+# ----------------------------------------------------------------------------
+# Code
+# ----
+#
+#
+
+emacs -Q  --batch -L . -f batch-byte-compile tbindent.el
+
+# ----------------------------------------------------------------------------
