@@ -7,7 +7,7 @@
 ;; URL: https://github.com/pierre-rouleau/tab-based-indent
 ;; Created   : Monday, November 10 2025.
 ;; Version: 0.1
-;; Package-Version: 20251112.1700
+;; Package-Version: 20251112.1719
 ;; Keywords: convenience, languages
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -115,6 +115,12 @@
 ;;              that resides inside dtrt-indent.el and indent-control.el
 ;;        See:  https://github.com/jscheid/dtrt-indent
 ;;              https://github.com/jcs-elpa/indent-control
+;;
+;; Note: `package-lint-current-buffer' reports 17 false-positive errors
+;;       on the following declaration.
+;;       His author have acknowledged those being false positive as described
+;;       in: https://github.com/purcell/package-lint/issues/304
+;;
 (defconst tbindent--mode-indent-vars
   ;; Mode                Variable, list of variables, list of (var . offset)
   '((actionscript-mode   actionscript-indent-level)
