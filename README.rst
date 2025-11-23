@@ -56,6 +56,10 @@ the indentation control variable corresponds to the tab width and we can now
 change the tab-width and the value of the indentation control variable to
 change the visual rendering of indentation to be narrower or wider.
 
+The tbindent code includes a look-up table mapping major mode to the
+indentation control variable(s) that mode uses.  You can add more mappings or
+even write mappings that override the built-in ones.
+
 Activation/deactivation:
 
 - When turning **tbindent-mode** on:
@@ -92,8 +96,15 @@ conversions are just a visual rendering change, the file is not modified.
 
 **Dynamically changing the indentation width**
 
-While **tbindent-mode** is on, use the **tbindent-set-tab-width** to change
-the indentation width.  That command changes the buffer local value of
+While **tbindent-mode** is on, use the **tbindent-set-tab-width** command to change
+the indentation width.
+
+::
+
+   M-x tbindent-set-tab-width
+
+
+That command changes the buffer local value of
 ``tab-width`` and the indentation control variable used by the major mode.
 With that command, you can quickly widen or narrow the indentation width in
 the buffer.  This modification does **not** and will not affect the content of
