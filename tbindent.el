@@ -7,7 +7,7 @@
 ;; URL: https://github.com/pierre-rouleau/tab-based-indent
 ;; Created   : Monday, November 10 2025.
 ;; Version: 0.1.1
-;; Package-Version: 20251123.1611
+;; Package-Version: 20251124.0847
 ;; Keywords: convenience, languages
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -90,6 +90,8 @@
 ;; ---------------------------------------------------------------------------
 ;;; History:
 ;;
+;; - Version 0.2   : Enhance safety: do not activate tbindent-mode if the
+;;                   indentation variable(s) for the major mode is unknown.
 ;; - Version 0.1.01: Update description, docstring typo fix, allow Emacs 24.3.
 ;; - Version 0.1: created, November 10, 2025 from code taken on my PEL project
 ;;                making it self-sufficient allowing future publishing on
@@ -249,6 +251,7 @@ to `ada-indent' variable."
                           fsharp-indent-level
                           fsharp-indent-offset))
     (gdscript-mode       gdscript-indent-offset)
+    (gleam-ts-mode       gleam-ts-indent-offset)
     (go-ts-mode          go-ts-mode-indent-offset)
     (gpr-ts-mode         gpr-ts-mode-indent-offset)
     (groovy-mode         groovy-indent-offset) ; Groovy
@@ -386,8 +389,7 @@ If nothing found, then look into `tbindent--mode-indent-vars'."
 
 (defun tbindent-mode-indent-control-vars (&optional mode)
   "Return list of indentation control vars for current major mode or MODE.
-Return nil if none is known.  In that case the variable is probably the
-default: `standard-indent'."
+Return nil if none found."
   (let* ((mode (or mode major-mode))
          (vars (tbindent--indent-vars-for mode)))
     (unless vars
@@ -405,9 +407,8 @@ current major mode (or the specified MODE) if there is one.  If there
 are several, return the value of the first one.  Return the value of
 `standard-indent' otherwise."
   (let ((vars (tbindent-mode-indent-control-vars mode)))
-    (if vars
-        (symbol-value (car vars))
-      standard-indent)))
+    (when vars
+      (symbol-value (car vars)))))
 
 ;; ---------------------------------------------------------------------------
 ;;* Mode Symbol Manipulation Utilities
@@ -546,7 +547,7 @@ Return the new `tab-width' or nil if unchanged."
 ;;* Changing Indentation Scheme Between and Space-Based and Tabs-Based
 ;;  ------------------------------------------------------------------
 ;;
-;; Two commands are provided to change the buffer's indentation from
+;; Two commands change the buffer's indentation from
 ;; space-based to tabs-based and vice-versa:
 ;;
 ;; - `tbindent-indent-with-tabs' converts space-based indentation to tab-based
@@ -836,14 +837,17 @@ IMPORTANT: Note that `tbindent-mode' only works for buffer where
 checks that when activating the mode and will refuse to activate it when
 the conditions are not met issuing a descriptive user-error instead."
   :lighter tbindent-lighter
-  (let ((warning-message-printed nil))
+  (let ((warning-message-printed nil)
+        (mode-indentation-width (tbindent-mode-indentation-width)))
     (if tbindent-mode
         ;; When turning mode on
         ;; --------------------
         (progn
-          (if (eq tab-width (tbindent-mode-indentation-width))
+          (if (and mode-indentation-width
+                   (eq tab-width mode-indentation-width))
+              ;; Meeting all conditions to activate the mode
               (progn
-                ;; if buffer is modified allow user to save first.  If user
+                ;; On modified buffer, allow user to save first.  If user
                 ;; quit, catch and activate the mode anyway, without saving.
                 (condition-case nil
                     (when (and (buffer-modified-p)
@@ -885,7 +889,7 @@ the conditions are not met issuing a descriptive user-error instead."
                   (add-hook 'before-save-hook #'tbindent--before-save-or-kill
                             -100
                             'local))
-                (unless (memq 'tbindent--before-save-or-kill  kill-buffer-hook)
+                (unless (memq 'tbindent--before-save-or-kill kill-buffer-hook)
                   (add-hook 'kill-buffer-hook #'tbindent--before-save-or-kill
                             -100
                             'local))
@@ -897,17 +901,23 @@ the conditions are not met issuing a descriptive user-error instead."
                 (unless warning-message-printed
                   (message "Indenting with tabs Mode enabled; width=%d."
                            tab-width)))
-            ;; tab-width differs from current indentation!
+            ;; Not meeting all conditions!
             (setq-local tbindent-mode nil)
-            (user-error "\
-Cannot activate tbindent-mode in %s: tab-width (%d) differs from %s (%d)!
+            (if mode-indentation-width
+                (user-error "\
+Can't activate tbindent-mode in %s: tab-width (%d) differs from %s (%d)!
 These must be the same and must represent the real indentation width used.
 To change tab-width, type:  M-: (setq-local tab-width %d)"
-                        (current-buffer)
-                        tab-width
-                        (tbindent-mode-indent-control-vars)
-                        (tbindent-mode-indentation-width)
-                        (tbindent-mode-indentation-width))))
+                            (current-buffer)
+                            tab-width
+                            (tbindent-mode-indent-control-vars)
+                            mode-indentation-width
+                            mode-indentation-width)
+              (user-error "\
+Can't activate tbindent-mode in %s: Unknown indentation control variable for '%s'!
+Please identify it in the `tbindent-extra-mode-indent-vars' alist."
+                          (current-buffer)
+                          major-mode))))
 
       ;; When turning mode off
       ;; ---------------------

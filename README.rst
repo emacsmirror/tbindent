@@ -2,10 +2,9 @@
 Tab-Based Indentation Converter
 ===============================
 
-..
-   .. image:: https://melpa.org/packages/tbindent-badge.svg
-      :alt: Melpa
-      :target: https://melpa.org/#/tbindent
+.. image:: https://melpa.org/packages/tbindent-badge.svg
+   :alt: Melpa
+   :target: https://melpa.org/#/tbindent
 
 
 **Seamlessly convert space-based indented files to tab-based indentation for
@@ -42,6 +41,10 @@ from space-based indentation to pure hard-tabs based indentation.
 
 The conditions are:
 
+- the code be able to identify the name of variables used to control
+  indentation for the major mode from hard-coded associated list
+  ``tbindent--mode-indent-vars`` or from the user-specified
+  ``tbindent-extra-mode-indent-vars``,
 - the value of ``tab-width`` must be equal to the indentation value identified
   by the indentation control variable used for the major-mode, such as, for example:
 
@@ -93,6 +96,12 @@ The tbindent mode excludes all conversions from space-based indentation to
 tabs-based from the buffer's undo list. They do not show up as a buffer
 modification.  If you think about it, that's really the case anyways; those
 conversions are just a visual rendering change, the file is not modified.
+
+**Toggle the tbindent-mode**
+
+To activate or de-activate the mode, type::
+
+  M-x tbindent-mode
 
 **Dynamically changing the indentation width**
 
