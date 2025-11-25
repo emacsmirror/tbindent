@@ -1,4 +1,4 @@
-;;; tbindent.el --- Tab Based Indentation Converter  -*- lexical-binding: t; -*-
+;;; tbindent.el --- Edit space-indented file in tab-indented buffer  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025  Pierre Rouleau
 
@@ -6,8 +6,8 @@
 ;; Maintainer: Pierre Rouleau <prouleau001@gmail.com>
 ;; URL: https://github.com/pierre-rouleau/tab-based-indent
 ;; Created   : Monday, November 10 2025.
-;; Version: 0.1.1
-;; Package-Version: 20251124.0847
+;; Version: 0.2.1
+;; Package-Version: 20251125.0803
 ;; Keywords: convenience, languages
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -90,6 +90,7 @@
 ;; ---------------------------------------------------------------------------
 ;;; History:
 ;;
+;; - Version 0.2.1 : Improve title.
 ;; - Version 0.2   : Enhance safety: do not activate tbindent-mode if the
 ;;                   indentation variable(s) for the major mode is unknown.
 ;; - Version 0.1.01: Update description, docstring typo fix, allow Emacs 24.3.
