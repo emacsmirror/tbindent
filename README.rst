@@ -229,6 +229,87 @@ tbindent-indent-with-spaces          Convert current buffer back to use space-ba
                                        space-based indented scheme.
 ==================================== ================================================
 
+Recommended Setup To Automate use of tbindent
+==============================================
+
+**Setup:**
+
+- Install `dtrt-indent`_.
+
+  - `dtrt-indent`_ will detect the indentation scheme used by a
+    file you open and sets the value of the indentation control variable for
+    the major mode from inspection of the content of the file.
+
+- Ensure that the hard-coded ``tbindent--mode-indent-vars`` alist has a entry
+  for each of the major modes you want to use.
+
+  - Add any missing associations to ``tbindent-extra-mode-indent-vars`` by
+    customizing it.
+  - You may also want to create a bug for the missing entry, or create a PR.
+
+    - To create a PR, clone the repo, and please create a branch in you repo,
+      make the modification in that branch and create a PR from your branch,
+      **not** from you main.
+
+- Customize ``tbindent-target-indent-width-default``: enter the indentation
+  width you want to see in the buffer for the major modes you want to use.
+
+**Test setup:**
+
+Once you have done the above, edit a file for one of the mode you have
+specified.  `dtrt-indent`_ will detect the indentation scheme used in the file
+and will adjust the value of the indentation control variables accordingly.
+Then activate ``tbindent-mode`` manually with::
+
+   M-x tbindent-mode
+
+If there is no discrepancy between the indentation control variable and
+``tab-width`` value, tbindent-mode activates and modifies the indentation
+rendering to match your specifications.  If there is a discrepancy tbindent-mode
+prints a message asking you to execute a command to set the buffer local value
+of ``tab-width`` to a specific value.  Do this and try again.
+
+Make modifications to the file.  Save the changes.  Diff your modifications to
+the files to see that the indentation of your modifications conform to the
+original indentation scheme of the file.
+
+Execute ``M-x tbindent-mode`` again to restore the buffer to the indentation
+scheme used by the file.
+
+**Activate Hooks:**
+
+Once you are happy with the results of your tests you may want to automate
+activation of the ``tbindent-mode`` in the major modes you use.  To do that,
+just specify ``tbindent-mode`` in a hook for the major mode.
+
+The following shows the corresponding Emacs Lisp code for some major modes.
+
+- For C:
+
+  .. code:: elisp
+
+                (add-hook 'c-mode-common-hook #'tbindent-mode)
+
+- For Dart using classic major mode:
+
+  .. code:: elisp
+
+                (add-hook 'dart-mode-hook #'tbindent-mode)
+
+- For Dart using Tree-Sitter based major mode:
+
+  .. code::  elisp
+
+                (add-hook 'dart-ts-mode-hook #'tbindent-mode)
+
+
+- For Gleam Tree-Sitter based major mode:
+
+  .. code:: elisp
+
+                (add-hook 'gleam-ts-mode-hook #'tbindent-mode)
+
+
 Other Packages
 ==============
 
