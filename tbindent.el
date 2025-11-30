@@ -6,8 +6,8 @@
 ;; Maintainer: Pierre Rouleau <prouleau001@gmail.com>
 ;; URL: https://github.com/pierre-rouleau/tab-based-indent
 ;; Created   : Monday, November 10 2025.
-;; Version: 0.3.0
-;; Package-Version: 20251130.1345
+;; Version: 0.3.1
+;; Package-Version: 20251130.1618
 ;; Keywords: convenience, languages
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -90,6 +90,12 @@
 ;; ---------------------------------------------------------------------------
 ;;; History:
 ;;
+;; - Version 0.3.1 :
+;;     - Enhance safety: when `tab-width' differs from indentation control
+;;       variable, allow automatic adjustment of `tab-width' only when the
+;;       `dtrt-indent' mode is currently active;  we can trust the value of
+;;       the indentation control variable more when `dtrt-indent' has adjusted
+;;       it from the content of the file.
 ;; - Version 0.3.0 :
 ;;     - Simplify use: tbindent-mode automatically adjusts `tab-width' if it
 ;;       differs from the value of the major mode indentation control
@@ -416,8 +422,8 @@ Return nil if none found."
   "Return the indentation width used by current major mode or MODE.
 Return the value of the indentation control variable used for the
 current major mode (or the specified MODE) if there is one.  If there
-are several, return the value of the first one.  Return the value of
-`standard-indent' otherwise."
+are several, return the value of the first one.
+Return nil when it is unknown."
   (let ((vars (tbindent-mode-indent-control-vars mode)))
     (when vars
       (symbol-value (car vars)))))
@@ -840,7 +846,7 @@ Read the value from the `tbindent-target-indent-widths'.  If not found return
       tbindent-target-indent-width-default)))
 
 (defvar-local tbindent--original-tab-width nil
-  "Value of buffer tab-width used before `tbindent-mode' activation.")
+  "Value of buffer `tab-width' used before `tbindent-mode' activation.")
 
 ;;;###autoload
 (define-minor-mode tbindent-mode
@@ -859,11 +865,21 @@ the conditions are not met issuing a descriptive user-error instead."
     (if tbindent-mode
         ;; When turning mode on
         ;; --------------------
-        (if mode-indentation-width
-            ;; Indentation width variable is known.
+        (if (and mode-indentation-width
+                 (or (eq tab-width mode-indentation-width)
+                     (and (featurep 'dtrt-indent)
+                          (boundp 'dtrt-indent)
+                          dtrt-indent)))
+            ;; Indentation width variable is known, and either `tab-width'
+            ;; equals the indentation indent control variable value OR
+            ;; `dtrt-indent' mode is used and active (in which case the
+            ;; indentation control variable value can be trusted).
             (progn
-              ;; Remember original tab-width
+              ;; Remember original value of `tab-width'.
               (setq tbindent--original-tab-width tab-width)
+              ;; If available use dtrt-indent to identify indentation.
+              (when (fboundp 'dtrt-indent-mode)
+                (dtrt-indent-mode 1))
               ;; Adjust local tab-width is necessary.
               (unless (eq tab-width mode-indentation-width)
                 (message "tbindent: changing %s value of tab-width from %d to %d"
@@ -928,11 +944,21 @@ the conditions are not met issuing a descriptive user-error instead."
                          tab-width)))
           ;; Indentation control variable is unknown!
           (setq-local tbindent-mode nil)
-          (user-error "\
+          (if mode-indentation-width
+              (user-error "\
+Can't activate tbindent-mode in %s: tab-width (%d) differs from %s (%d)!
+These must be the same.  Please use dtrt-indent.  See README.
+To change tab-width, type:  M-: (setq-local tab-width %d)"
+                          (current-buffer)
+                          tab-width
+                          (tbindent-mode-indent-control-vars)
+                          mode-indentation-width
+                          mode-indentation-width)
+            (user-error "\
 Can't activate tbindent-mode in %s: Unknown indentation control variable for '%s'!
-Please identify it in the `tbindent-extra-mode-indent-vars' alist."
-                      (current-buffer)
-                      major-mode))
+Please identify it in the `tbindent-extra-mode-indent-vars' alist"
+                        (current-buffer)
+                        major-mode)))
 
       ;; When turning mode off
       ;; ---------------------

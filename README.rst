@@ -40,10 +40,16 @@ from space-based indentation to pure hard-tabs based indentation.
 
 The conditions are:
 
-- the code be able to identify the name of variables used to control
+- the code must be able to identify the name of variables used to control
   indentation for the major mode from hard-coded associated list
   ``tbindent--mode-indent-vars`` or from the user-specified
-  ``tbindent-extra-mode-indent-vars``,
+  ``tbindent-extra-mode-indent-vars``.
+
+  - It's strongly recommended to install the `dtrt-indent`_ package, allowing
+    ``tbindent-mode`` to activate``dtrt-indent-mode`` before checking the
+    indentation control variable, minimizing changes of misinterpretation of
+    the file's indentation scheme.
+
 - the value of ``tab-width`` must be equal to the indentation value identified
   by the indentation control variable used for the major-mode, such as, for example:
 
@@ -58,12 +64,13 @@ When turning on:
 - ``tbindent-mode`` checks if the indentation variable for the
   major mode is known and issue an error with instructions if it is unknown.
 - ``tbindent-mode`` compares the value of ``tab-width`` with the value of the
-  indentation control variable.  If they differ, it sets the local value of
-  ``tab-width`` to the value of the indentation control variable and issues a
-  message.
+  indentation control variable.  If they differ, and if `dtrt-indent`_ is
+  available, it sets the local value of ``tab-width`` to the value of the
+  indentation control variable and issues a message.  If `dtrt-indent`_ is not
+  available ``tbindent-mode`` issues an error with instructions.
 
-At this point, inside the buffer, an indentation step identified by
-the indentation control variable corresponds to the tab width.
+If ``tbindent-mode`` activates, the indentation step used in the buffer
+identified by the indentation control variable corresponds to the tab width.
 The code can now change the tab-width and the value of the indentation control
 variable to change the visual rendering of indentation to be narrower or
 wider.
@@ -247,9 +254,12 @@ Recommended Setup To Automate use of tbindent
 
 - Install `dtrt-indent`_.
 
-  - `dtrt-indent`_ will detect the indentation scheme used by a
-    file you open and sets the value of the indentation control variable for
+  - ``tbindent-mode`` uses `dtrt-indent`_ if it is available to detect
+    the indentation scheme used by the file you open.
+    It and sets the value of the indentation control variable for
     the major mode from inspection of the content of the file.
+    This minimizes chances of mi-interpreting the indentation scheme
+    used by the file.
 
 - Ensure that the hard-coded ``tbindent--mode-indent-vars`` alist has a entry
   for each of the major modes you want to use.
