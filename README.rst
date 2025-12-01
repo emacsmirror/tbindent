@@ -16,7 +16,42 @@ fixed number of spaces into a buffer which uses tab-based indentation and save
 the buffer content back to file with the original space-based indentation
 scheme.
 
+**Example 1**
+
+Manually turning ``tbindent-mode`` on and off to edit a 2-space indented Gleam
+file as if it used 4-space indentation.
+
+
 .. image:: res/tbindent.gif
+
+
+**Example 2**
+
+Edit a 2-space indented Dart file in a 4 columns indented buffer, with
+the ``tbindent-mode`` hooked for the `dart-ts-mode`` major mode and the
+``dtrt-indent-mode`` used:
+
+- Open the tweens.dart file in the top window buffer.
+
+  - The ``*Message*`` buffer in the bottom window shows ``dtrt-indent-mode``
+    detecting the indentation of the file and ``tbindent-mode`` taking over.
+
+- Open a terminal shell buffer in the bottom window.
+
+  - inside the shell execute ``vi`` and open the same file inside Vim (which
+    runs in a terminal running inside Emacs).
+
+- Go back to the top window, duplicate one line. The buffer shows the line as
+  if it was indented by 4 columns.  Save the file.
+
+- Move to the bottom window and refresh Vim to see the changes.  The new line
+  is shown indented with 2 columns as the line above.
+
+- Move to the top window and invoke the file diff which opens in the bottom
+  window and shows that the new created line is indeed indented with 2 spaces.
+
+.. image:: res/tbindent-vi.gif
+
 
 Overview
 ========
