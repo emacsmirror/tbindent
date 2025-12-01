@@ -58,6 +58,9 @@ Overview
 
 **Why would you want to use this?**
 
+- You have problems or don't like working with files using narrow indentation,
+  you can't change the file indentation but want a tool that can make it look
+  wider.
 - Edit space-based indentation files as if they were tab-based.
 - Use it to edit a file using a wider or narrower indentation width.
 
