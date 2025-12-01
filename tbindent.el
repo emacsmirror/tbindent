@@ -6,8 +6,8 @@
 ;; Maintainer: Pierre Rouleau <prouleau001@gmail.com>
 ;; URL: https://github.com/pierre-rouleau/tab-based-indent
 ;; Created   : Monday, November 10 2025.
-;; Version: 0.3.1
-;; Package-Version: 20251130.1618
+;; Version: 0.3.2
+;; Package-Version: 20251201.1502
 ;; Keywords: convenience, languages
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -52,8 +52,8 @@
 ;; file.
 ;;
 ;; This feature may appeal to people that have problems working with small
-;; indentation width imposed by language or team conventions.  It acts as a
-;; workaround: temporary change the indentation scheme to a hard-tab based
+;; indentation width imposed by language or team code guidelines.  It acts as
+;; a workaround: temporary change the indentation scheme to a hard-tab based
 ;; indentation for editing, change the width of the hard tab for visibility
 ;; but keep the original indentation scheme inside the file.
 ;;
@@ -68,7 +68,7 @@
 ;;   and the width of the variables for the major mode to a larger value.
 ;;
 ;; Once set-up we can see the code with a wider indentation and
-;; continue to work with the rules imposed by the major mode logic.
+;; continue to edit the buffer with the rules imposed by the major mode logic.
 ;;
 ;; Later, before saving the buffer back to the file, we simply perform the
 ;; following steps:
@@ -90,6 +90,8 @@
 ;; ---------------------------------------------------------------------------
 ;;; History:
 ;;
+;; - Version 0.3.2 :
+;;     - Improved docstrings and comments.
 ;; - Version 0.3.1 :
 ;;     - Enhance safety: when `tab-width' differs from indentation control
 ;;       variable, allow automatic adjustment of `tab-width' only when the
@@ -122,7 +124,7 @@
 ;;  Just Emacs provided packages:
 (require 'simple)         ; use: `normal-auto-fill-function'
 ;;
-;; The following variables are defined in Emacs built-ins:
+;; Use the following Emacs built-in variables:
 ;; from: Emacs files.el   ; use: `before-save-hook', `after-save-hook',
 ;;                        ;      `kill-buffer-hook'
 ;; from: Emacs indent.el  ; use: `standard-indent'
@@ -151,8 +153,9 @@
 
 (defcustom tbindent-target-indent-width-default 4
   "Default target indentation width.
-The indentation and tab width used by the `tbindent-mode' if none
-is specified in `tbindent-target-indent-widths' for the mode."
+The default indentation and tab width used by the `tbindent-mode'
+when there is no entry in `tbindent-target-indent-widths' for the current
+major mode."
   :group 'tbindent
   :type 'integer
   :safe 'tbindent-indent-valid-p)
@@ -174,28 +177,35 @@ mode."
 
 (defcustom tbindent-extra-mode-indent-vars nil
   "User-specified indentation variable specifications for modes.
-This is a alist mapping the major mode name to the name of one variable, a list
-of variables or a list of (vars . offset).  This identifies the name of the
-indentation control variable or variables used by the mode and if necessary an
-width offset applied to the variable: var = width + offset.
+This alist, used by `tbindent-mode' and `tbindent-set-tab-width',
+ maps the major mode name to one of:
 
-By adding entries into this list, you can add information that complements or
-overrides the entries in the hard-coded `tbindent--mode-indent-vars'.
+- the name of an indentation control variable used by the mode,
+- a list of the indentation variables used by the mode,
+- a list of (var . offset) cons cells where
 
-For example if you use the old `ada-mode' you could add the entry that maps it
-to `ada-indent' variable."
+  - the var is the name of one indentation control variable name, and
+  - offset, an integer, applied to requested width to compute the value
+    of the variable, like so: var = width + offset.
+
+By adding entries into this list, you can add information that
+complements or overrides entries in the hard-coded
+`tbindent--mode-indent-vars'.
+
+For example if you use the old `ada-mode' you could add the entry that
+maps it to `ada-indent' variable."
   :group 'tbindent
   :type '(repeat
           (list
-           (symbol :tag "mode name   ")
+           (symbol :tag "Major mode")
            (choice :tag "use"
-                   (symbol :tag "indent control variable name")
-                   (repeat :tag "Several variables"
-                    (symbol :tag "indent control variable name"))
-                   (repeat :tag "Several (var . offset) cells"
-                    (cons
-                     (symbol :tag "indent control variable name ")
-                     (integer :tag "offset from tab-width applied")))))))
+                   (symbol :tag "Indent control variable")
+                   (repeat :tag "Indent control variables"
+                           (symbol :tag "variable name"))
+                   (repeat :tag "(variable . offset) cells"
+                           (cons
+                            (symbol :tag "variable name")
+                            (integer :tag "applied offset")))))))
 
 ;;* Mode Specific Indentation Width Utilities
 ;;  -----------------------------------------
@@ -370,17 +380,16 @@ to `ada-indent' variable."
 This alist maps the mode name to one of 3 possible entities:
 - The name of the single variable that controls indentation for the mode, and
   which must have the same value as `tab-width'.
-- A list holding the names of each variable that control various aspects of
-  the mode's indentation.  Each of these variables must be set to the same
+- A list holding the names of each variable that control the mode's
+  indentation.  The mode sets Each of these variables to the same
   value as `tab-width'.
 - A list of (varname . offset) cons cell(s).  The car of the cons cell is the
   name of the indentation control variable.  The cdr of the cons cell is the
   offset that must be applied to `tab-width' to get the indentation value.
 
 IMPORTANT:
- Note that the `tbindent-mode' only works for buffer where the `tab-width'
- can be set to the same value as the indentation variable or all indentation
- variables.")
+ Note that `tbindent-mode' works reliably for major modes that use one or
+ mode indentation control variables without any offset.")
 
 
 (defun tbindent-string-ends-with-p (text suffix)
@@ -421,8 +430,9 @@ Return nil if none found."
 (defun tbindent-mode-indentation-width (&optional mode)
   "Return the indentation width used by current major mode or MODE.
 Return the value of the indentation control variable used for the
-current major mode (or the specified MODE) if there is one.  If there
-are several, return the value of the first one.
+current major mode (or the specified MODE) if there is one.  If more than one
+control variable is used, the first one should represent a full tab width
+and its value is returned.
 Return nil when it is unknown."
   (let ((vars (tbindent-mode-indent-control-vars mode)))
     (when vars
@@ -507,11 +517,15 @@ If nothing exists for the current major-mode return DEFAULT-VALUE."
 ;;
 ;; * `tbindent-set-tab-width'
 ;;   - `tbindent-mode-indent-control-vars'
+;;     - `tbindent--indent-vars-for'
+;;       -d: tbindent-extra-mode-indent-vars
+;;       -d: tbindent--mode-indent-vars
+;;     - `tbindent-string-ends-with-p'
 ;;   - `tbindent-read-number'
 ;;
 
 (defvar-local tbindent--original-tab-width nil
-  "Tab width value used before `tbindent-indent-with-tabs' is used.")
+  "Tab width value used before `tbindent-indent-with-tabs' starts.")
 
 (defvar-local tbindent--last-set-tab-width nil
   "Tab width set by last `tbindent-set-tab-width' call.")
@@ -855,10 +869,11 @@ Read the value from the `tbindent-target-indent-widths'.  If not found return
 Once the mode is active, change the visual indentation with the
 `tbindent-set-tab-width' command with \\[tbindent-set-tab-width].
 
-IMPORTANT: Note that `tbindent-mode' only works for buffer where
-`tab-width' has the same value as the indentation control variable.  It
-checks that when activating the mode and will refuse to activate it when
-the conditions are not met issuing a descriptive user-error instead."
+IMPORTANT: Note that `tbindent-mode' only works reliably for major modes
+that use one or mode indentation control variables without any offset
+and these all have the same value as `tab-width'.  It checks that when
+activating the mode and will refuse to activate it when the conditions
+are not met issuing a descriptive user-error instead."
   :lighter tbindent-lighter
   (let ((warning-message-printed nil)
         (mode-indentation-width (tbindent-mode-indentation-width)))
