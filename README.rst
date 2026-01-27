@@ -1,11 +1,12 @@
-===============================
-Tab-Based Indentation Converter
-===============================
+=================================================
+Edit space indented files in tab indented buffers
+=================================================
 
 .. image:: https://melpa.org/packages/tbindent-badge.svg
    :alt: Melpa
    :target: https://melpa.org/#/tbindent
 
+- **Use indentation width that pleases you, without impact on file's content!**
 - **Edit a 2-space indented file as if it was using a wider indentation!**
 - **Seamlessly convert space-based indented files to tab-based indentation for viewing and editing.**
 - **Decouple the file indentation-scheme from what buffer uses for viewing and editing.**
