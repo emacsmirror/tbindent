@@ -1,6 +1,6 @@
 ---
 title: Why 2-Space Indentation is an Accessibility Barrier (And How I Solved It in Emacs)
-published: false
+published: on [Dev.to](https://dev.to/rouleaup/why-2-space-indentation-is-an-accessibility-barrier-and-how-i-solved-it-in-emacs-2g49)
 tags: emacs, accessibility, elisp, productivity
 description: >
   Rigid 2-space project linting guidelines present a
