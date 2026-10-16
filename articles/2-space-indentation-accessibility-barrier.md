@@ -9,7 +9,7 @@ description: >
   decoupling viewing from saving directly inside Emacs.
 ---
 
-# [Read this article on Dev.to](https://dev.to)
+# [Read this article on Dev.to](https://dev.to/rouleaup/why-2-space-indentation-is-an-accessibility-barrier-and-how-i-solved-it-in-emacs-2g49)
 
 We’ve all seen it: the modern frontend and backend developer ecosystem has largely consolidated around space-based indentation.
 Tools like Prettier and ESLint enforce rigid styling guidelines, and a massive portion of open-source projects have settled on a strict **2-space indentation** standard.
