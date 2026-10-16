@@ -1,12 +1,15 @@
 ---
 title: Why 2-Space Indentation is an Accessibility Barrier (And How I Solved It in Emacs)
-published: false
+published: true
 tags: emacs, accessibility, elisp, productivity
 description: >
   Rigid 2-space project linting guidelines present a
   real accessibility hurdle for visually impaired developers.
-  Here is how tbindent-mode decoupling viewing from saving in Emacs.
+  Here is how tbindent-mode handles it smoothly by
+  decoupling viewing from saving directly inside Emacs.
 ---
+
+# [Read this article on Dev.to](https://dev.to/rouleaup/why-2-space-indentation-is-an-accessibility-barrier-and-how-i-solved-it-in-emacs-2g49)
 
 We’ve all seen it: the modern frontend and backend developer ecosystem has largely consolidated around space-based indentation.
 Tools like Prettier and ESLint enforce rigid styling guidelines, and a massive portion of open-source projects have settled on a strict **2-space indentation** standard.
